@@ -1,0 +1,104 @@
+server:
+  port: 10500
+
+logging:
+  level:
+    root: info
+    org.xapps.services: debug
+
+spring:
+  application:
+    name: customerservice
+
+  profiles:
+    active: dev
+
+  config:
+    import: optional:configserver:http://guest:guest@localhost:10100
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/forniture_store_db
+    username: root
+    password: guest
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+  cloud:
+    bus:
+      enabled: true
+      env:
+        enabled: true
+      refresh:
+        enabled: true
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+authorization:
+  service:
+    url: authorization-service
+
+messaging:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    create-credentials:
+      request:
+        queue: "create_credentials_request_queue"
+        exchange: "create_credentials_request_exchange"
+        routing-key: "create_credentials_request_routing_key"
+      response:
+        queue: "create_credentials_response_queue"
+    delete-credentials:
+      request:
+        queue: "delete_credentials_request_queue"
+        exchange: "delete_credentials_request_exchange"
+        routing-key: "delete_credentials_request_routing_key"
+      response:
+        queue: "delete_credentials_response_queue"
+
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    serviceUrl:
+      defaultZone: http://guest:guest@localhost:10200/eureka
+    registerWithEureka: true
+    fetchRegistry: true
+
+security:
+  origins:
+    urls: "*"
+    maxAge: 3600
+    allowedMethods: GET, POST, PUT, DELETE
+    allowedHeaders: Origin, Content-Type, Accept, Authorization
+  jwtGeneration:
+    key: qwerty123456
+    type: Bearer
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+
+circuitBreaker:
+  breaker:
+    maxAttempts: 3
+    openTimeout: 15000
+    resetTimeout: 30000
+  retry:
+    maxAttempts: 3
+    backOffPeriod: 2000

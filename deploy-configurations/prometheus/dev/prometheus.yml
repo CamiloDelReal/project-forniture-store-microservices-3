@@ -1,0 +1,50 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+scrape_configs:
+  - job_name: configuration-service
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ['localhost:10100']
+    basic_auth:
+      username: "guest"
+      password: "guest"
+  - job_name: discovery-service
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ['localhost:10200']
+    basic_auth:
+      username: "guest"
+      password: "guest"
+  - job_name: 'gateway-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['localhost:10300']
+  - job_name: 'authorization-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['localhost:10400']
+  - job_name: 'customer-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['localhost:10500']
+  - job_name: 'forniture-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['localhost:10600']
+  - job_name: 'cart-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['localhost:10700']
+  - job_name: 'payment-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['localhost:10800']
+  - job_name: 'delivery-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['localhost:10900']
+  - job_name: 'support-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['localhost:11000']

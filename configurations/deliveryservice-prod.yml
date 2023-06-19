@@ -1,0 +1,93 @@
+server:
+  port: 0
+
+logging:
+  level:
+    root: info
+    org.xapps.services: debug
+
+spring:
+  application:
+    name: deliveryservice
+
+  datasource:
+    url: jdbc:mysql://mysqldbdelivery:3306/delivery_db?serverTimezone=UTC
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+  kafka:
+    bootstrap-servers: kafkamessaging:9092
+    consumer:
+      bootstrap-servers: kafkamessaging:9092
+      group-id: completions
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+    topics:
+      paymentCompletion: paymentCompletion
+
+  main:
+    allow-bean-definition-overriding: true
+
+  cloud:
+    bus:
+      enabled: true
+      env:
+        enabled: true
+      refresh:
+        enabled: true
+
+  rabbitmq:
+    host: rabbitmqmessaging
+    port: 5672
+    username: root
+    password: root
+
+security:
+  origins:
+    urls: "*"
+    maxAge: 3600
+    allowedMethods: GET, POST, PUT, DELETE
+    allowedHeaders: Origin, Content-Type, Accept, Authorization
+  jwtGeneration:
+    key: qwerty123456
+    type: Bearer
+
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    serviceUrl:
+      defaultZone: http://root:root@discovery:10200/eureka
+    registerWithEureka: true
+    fetchRegistry: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://zipkintracing:9411/api/v2/spans
+
+customer:
+  service:
+    url: customer-service
+
+circuitBreaker:
+  breaker:
+    maxAttempts: 3
+    openTimeout: 15000
+    resetTimeout: 30000
+  retry:
+    maxAttempts: 3
+    backOffPeriod: 2000

@@ -1,0 +1,65 @@
+server:
+  port: 10300
+
+logging:
+  level:
+    root: info
+    org.xapps.services: debug
+
+spring:
+  application:
+    name: gatewayservice
+
+  profiles:
+    active: dev
+
+  config:
+    import: optional:configserver:http://guest@localhost:10100
+
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lowerCaseServiceId: true
+
+    bus:
+      enabled: true
+      env:
+        enabled: true
+      refresh:
+        enabled: true
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+eureka:
+  instance:
+    preferIpAddress: false
+  client:
+    serviceUrl:
+      defaultZone: http://guest:guest@localhost:10200/eureka
+    registerWithEureka: true
+    fetchRegistry: true
+
+security:
+  origins:
+    urls: "*"
+    maxAge: 3600
+    allowedMethods: GET, POST, PUT, DELETE, PATCH, OPTIONS, HEAD
+    allowedHeaders: "*"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans

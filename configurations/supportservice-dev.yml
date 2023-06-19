@@ -1,0 +1,76 @@
+server:
+  port: 10800
+
+logging:
+  level:
+    root: info
+    org.xapps.services: debug
+
+spring:
+  application:
+    name: supportservice
+
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      authentication-database: admin
+      username: guest
+      password: guest
+      database: chat_app_db
+
+  cloud:
+    bus:
+      enabled: true
+      env:
+        enabled: true
+      refresh:
+        enabled: true
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    serviceUrl:
+      defaultZone: http://guest:guest@localhost:10200/eureka
+    registerWithEureka: true
+    fetchRegistry: true
+
+security:
+  origins:
+    urls: "*"
+    maxAge: 3600
+    allowedMethods: GET, POST, PUT, DELETE
+    allowedHeaders: Origin, Content-Type, Accept, Authorization
+  jwtGeneration:
+    key: qwerty123456
+    type: Bearer
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+
+customer:
+  service:
+    url: http://customer-service
+    paths:
+      currentCustomer: /customers/current
+
+circuitBreaker:
+  retry:
+    maxAttempts: 3
+    backOffPeriod: 2

@@ -1,0 +1,680 @@
+version: "3.8"
+
+services:
+
+# Datasources -------------------------------------------------------------------------------------
+
+  redisdbauthorization:
+    image: redis:7.0.8-bullseye
+    mem_limit: 700m
+    hostname: redisdbauthorization
+    container_name: redisdbauthorization
+    ports:
+      - 6379:6379
+    command:
+      - --requirepass root
+    networks:
+      - microservices3
+
+  mysqldbauthorization:
+    image: mysql:8.0.32
+    mem_limit: 800m
+    hostname: mysqldbauthorization
+    container_name: mysqldbauthorization
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_DATABASE: authorization_db
+      MYSQL_ROOT_PASSWORD: root
+    networks:
+      - microservices3
+
+  mysqldbcustomers:
+    image: mysql:8.0.32
+    mem_limit: 800m
+    hostname: mysqldbcustomers
+    container_name: mysqldbcustomers
+    ports:
+      - 3307:3306
+    environment:
+      MYSQL_DATABASE: customers_db
+      MYSQL_ROOT_PASSWORD: root
+    networks:
+      - microservices3
+
+  mysqldbfornitures:
+    image: mysql:8.0.32
+    mem_limit: 800m
+    hostname: mysqldbfornitures
+    container_name: mysqldbfornitures
+    ports:
+      - 3308:3306
+    environment:
+      MYSQL_DATABASE: comments_db
+      MYSQL_ROOT_PASSWORD: root
+    networks:
+      - microservices3
+
+  mysqldbdelivery:
+    image: mysql:8.0.32
+    mem_limit: 800m
+    hostname: mysqldbdelivery
+    container_name: mysqldbdelivery
+    ports:
+      - 3309:3306
+    environment:
+      MYSQL_DATABASE: delivery_db
+      MYSQL_ROOT_PASSWORD: root
+    networks:
+      - microservices3
+
+  postgresqldbpayments:
+    image: postgres:15.3
+    mem_limit: 800m
+    hostname: postgresqldbpayments
+    container_name: postgresqldbpayments
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: payments_db
+    volumes:
+      - ./../deploy-configurations/postgresql/prod:/docker-entrypoint-initdb.d
+    networks:
+      - microservices3
+
+  elasticsearchdbfornitures:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.6.1
+    mem_limit: 2g
+    hostname: elasticsearchdbfornitures
+    container_name: elasticsearchdbfornitures
+    ports:
+      - 9200:9200
+      - 9300:9300
+    healthcheck:
+      test: curl -u elastic:elastic -X GET http://localhost:9200/_cat/health && curl -u elastic:elastic -X POST http://localhost:9200/_security/user/kibana_system/_password -H 'Content-Type:application/json' -d '{"password":"kibanapassword"}' && curl -u elastic:elastic -X POST http://localhost:9200/_security/role/forniture_role -H 'Content-Type:application/json' -d '{"cluster":["all"],"indices":[{"names":["fornitures"],"privileges":["all"]}],"applications":[{"application":"fornitureservice","privileges":["all"],"resources":["*"]}]}' && curl -u elastic:elastic -X POST http://localhost:9200/_security/user/forniture -H 'Content-Type:application/json' -d '{"password":"forniture","roles":["forniture_role"],"full_name":"Forniture DB Admin","email":"forniture@example.com","metadata":{"intelligence":7}}' || exit 1
+      interval: 60s
+      retries: 5
+      start_period: 20s
+      timeout: 10s 
+    environment:
+      discovery.type: single-node
+      discovery.seed_hosts: elasticsearchdbfornitures
+      xpack.security.enabled: true
+      ELASTIC_PASSWORD: elastic
+      # ES_JAVA_OPTS: -Xms500m -Xmx800m
+    networks:
+      - microservices3
+
+  kibanafornitures:
+    image: docker.elastic.co/kibana/kibana:8.6.1
+    mem_limit: 700m
+    hostname: kibanafornitures
+    container_name: kibanafornitures
+    ports:
+      - 5601:5601
+    environment:
+      ELASTICSEARCH_HOSTS: '["http://elasticsearchdbfornitures:9200"]'
+      xpack.security.enabled: true
+      ELASTICSEARCH_USERNAME: kibana_system
+      ELASTICSEARCH_PASSWORD: kibanapassword
+    depends_on:
+      - elasticsearchdbfornitures
+    networks:
+      - microservices3
+
+  redisdbcart:
+    image: redis:7.0.8-bullseye
+    mem_limit: 700m
+    hostname: redisdbcart
+    container_name: redisdbcart
+    ports:
+      - 6380:6379
+    command:
+      - --requirepass root
+    networks:
+      - microservices3
+
+  mongodbsupport:
+    image: mongo:6.0.4-jammy
+    mem_limit: 800m
+    hostname: mongodbsupport
+    container_name: mongodbsupport
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+      MONGO_INITDB_DATABASE: chat_app_db
+    volumes:
+      - ./../deploy-configurations/mongo/prod/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    networks:
+      - microservices3
+
+# Monitoring --------------------------------------------------------------------------------------
+
+  zipkintracing:
+    image: openzipkin/zipkin-slim:2
+    mem_limit: 800m
+    hostname: zipkintracing
+    container_name: zipkintracing
+    ports:
+      - 9411:9411
+    networks:
+      - microservices3
+
+  prometheusmonitoring:
+    image: prom/prometheus:v2.42.0
+    mem_limit: 800m
+    hostname: prometheusmonitoring
+    container_name: prometheusmonitoring
+    ports:
+      - 9090:9090
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --web.config.file=/etc/prometheus/web.yml
+    volumes:
+      - ./../deploy-configurations/prometheus/prod/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./../deploy-configurations/prometheus/prod/web.yml:/etc/prometheus/web.yml
+    networks:
+      - microservices3
+      
+  grafanamonitoring:
+    image: grafana/grafana:9.3.6
+    mem_limit: 700m
+    hostname: grafanamonitoring
+    container_name: grafanamonitoring
+    depends_on:
+      - prometheusmonitoring
+    ports:
+      - 3000:3000
+    environment:
+      GF_SECURITY_ADMIN_USER: root
+      GF_SECURITY_ADMIN_PASSWORD: root
+    networks:
+      - microservices3
+
+# Messaging ---------------------------------------------------------------------------------------
+
+  rabbitmqmessaging:
+    image: rabbitmq:3.9.28-management
+    mem_limit: 800m
+    hostname: rabbitmqmessaging
+    container_name: rabbitmqmessaging
+    ports:
+      - 15672:15672
+      - 5672:5672
+    environment:
+      RABBITMQ_DEFAULT_USER: root
+      RABBITMQ_DEFAULT_PASS: root
+    volumes:
+      - ./../deploy-configurations/rabbitmq/prod/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+      - ./../deploy-configurations/rabbitmq/prod/definitions.json:/etc/rabbitmq/definitions.json:ro
+    networks:
+      - microservices3
+
+  zookeeper:
+    image: docker.io/bitnami/zookeeper:3.8
+    ports:
+      - 2181:2181
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    networks:
+      - microservices3
+
+  kafkamessaging:
+    image: docker.io/bitnami/kafka:3.4
+    hostname: kafkamessaging
+    container_name: kafkamessaging
+    ports:
+      - 9092:9092
+    environment:
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_ENABLE_KRAFT=no
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafkamessaging:9092,EXTERNAL://kafkamessaging:9094
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
+    depends_on:
+      - zookeeper
+    networks:
+      - microservices3
+
+  kafkadrop:
+    image: obsidiandynamics/kafdrop:3.30.0
+    hostname: kafkadrop
+    container_name: kafkadrop
+    ports:
+      - 9000:9000
+    environment:
+      KAFKA_BROKERCONNECT: kafkamessaging:9092
+    networks:
+      - microservices3
+
+# Logging -----------------------------------------------------------------------------------------
+
+  logstashlogging:
+    image: docker.elastic.co/logstash/logstash:8.6.1
+    mem_limit: 1g
+    hostname: logstashlogging
+    container_name: logstashlogging
+    environment:
+      XPACK_MONITORING_ENABLED: false
+      # LS_JAVA_OPTS: -Xms700m -Xmx700m
+    volumes:
+      - ./../deploy-configurations/logging/prod/pipeline/:/usr/share/logstash/pipeline/
+    networks:
+      - microservices3
+
+  elasticsearchlogging:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.6.1
+    mem_limit: 2g
+    hostname: elasticsearchlogging
+    container_name: elasticsearchlogging
+    ports:
+      - 9201:9200
+      - 9301:9300   
+    healthcheck:
+      test: curl -u elastic:elastic -X GET http://localhost:9200/_cat/health && curl -u elastic:elastic -X POST http://localhost:9200/_security/user/kibana_system/_password -H 'Content-Type:application/json' -d '{"password":"kibanapassword"}' && curl -u elastic:elastic -X POST http://localhost:9200/_security/role/logstash_writer -H 'Content-Type:application/json' -d '{"cluster":["manage_index_templates","monitor","manage_ilm"],"indices":[{"names":["*"],"privileges":["write","create","create_index","manage","manage_ilm"]}]}' && curl -u elastic:elastic -X POST http://localhost:9200/_security/user/logstash_internal -H 'Content-Type:application/json' -d '{"password":"logstashpassword","roles":["logstash_writer"],"full_name":"Internal Logstash User"}' || exit 1
+      interval: 60s
+      retries: 5
+      start_period: 20s
+      timeout: 10s 
+    environment:
+      discovery.type: single-node
+      discovery.seed_hosts: elasticsearchlogging
+      xpack.security.enabled: true
+      ELASTIC_PASSWORD: elastic
+      # ES_JAVA_OPTS: -Xms500m -Xmx800m
+    networks:
+      - microservices3
+
+  kibanalogging:
+    image: docker.elastic.co/kibana/kibana:8.6.1
+    mem_limit: 700m
+    hostname: kibanalogging
+    container_name: kibanalogging
+    ports:
+      - 5602:5601
+    environment:
+      ELASTICSEARCH_HOSTS: '["http://elasticsearchlogging:9200"]'
+      xpack.security.enabled: true
+      ELASTICSEARCH_USERNAME: kibana_system
+      ELASTICSEARCH_PASSWORD: kibanapassword
+    depends_on:
+      - elasticsearchlogging
+    networks:
+      - microservices3
+
+  filebeatlogging:
+    image: docker.elastic.co/beats/filebeat:8.6.1
+    mem_limit: 700m
+    hostname: filebeatlogging
+    container_name: filebeatlogging
+    volumes:
+      - ./../deploy-configurations/logging/prod/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    user: root
+    depends_on:
+      - logstashlogging
+      - elasticsearchlogging
+    networks:
+      - microservices3
+
+# Services ----------------------------------------------------------------------------------------
+
+  configuration:
+    image: microservices3/configuration-service
+    hostname: configuration
+    container_name: configuration
+    depends_on:
+      - zipkintracing
+      - rabbitmqmessaging
+      - filebeatlogging
+      - logstashlogging
+      - elasticsearchlogging
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    environment:
+      WAIT_HOSTS: zipkintracing:9411, rabbitmqmessaging:5672
+      SERVER_PORT: 10100
+      SPRING_SECURITY_USER_NAME: root
+      SPRING_SECURITY_USER_PASSWORD: root
+      SPRING_PROFILES_ACTIVE: native,prod
+      SPRING_RABBITMQ_HOST: rabbitmqmessaging
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: root
+      SPRING_RABBITMQ_PASSWORD: root
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://root:root@discovery:10200/eureka
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkintracing:9411/api/v2/spans
+      SPRING_CLOUD_CONFIG_SERVER_NATIVE_SEARCHLOCATIONS: /configurations
+    labels:
+      collect_logs_with_filebeat: "true"
+      decode_log_event_to_json_object: "true"
+      application_name: "configuration-service"
+    volumes:
+      - ./../configurations:/configurations
+    ports:
+      - 10100:10100
+    networks:
+      - microservices3
+
+  discovery:
+    image: microservices3/discovery-service
+    hostname: discovery
+    container_name: discovery
+    depends_on:
+      - configuration
+      - rabbitmqmessaging
+      - zipkintracing
+      - filebeatlogging
+      - logstashlogging
+      - elasticsearchlogging
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    environment:
+      WAIT_HOSTS: zipkintracing:9411, rabbitmqmessaging:5672, configuration:10100
+      SERVER_PORT: 10200
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_CONFIG_IMPORT: optional:configserver:http://root:root@configuration:10100
+    labels:
+      collect_logs_with_filebeat: "true"
+      decode_log_event_to_json_object: "true"
+      application_name: "discovery-service"
+    ports:
+      - 10200:10200
+    networks:
+      - microservices3
+
+  gateway:
+    image: microservices3/gateway-service
+    hostname: gateway
+    container_name: gateway
+    depends_on:
+      - configuration
+      - discovery
+      - rabbitmqmessaging
+      - zipkintracing
+      - filebeatlogging
+      - logstashlogging
+      - elasticsearchlogging
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    environment:
+      WAIT_HOSTS: zipkintracing:9411, rabbitmqmessaging:5672, configuration:10100, discovery:10200
+      SERVER_PORT: 10300
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_CONFIG_IMPORT: optional:configserver:http://root:root@configuration:10100
+    labels:
+      collect_logs_with_filebeat: "true"
+      decode_log_event_to_json_object: "true"
+      application_name: "gateway-service"
+    ports:
+      - "10300:10300"
+    networks:
+      - microservices3
+
+  authorization:
+    image: microservices3/authorization-service
+    # hostname: authorization
+    # container_name: authorization
+    depends_on:
+      - configuration
+      - discovery
+      - gateway
+      - rabbitmqmessaging
+      - zipkintracing
+      - redisdbauthorization
+      - mysqldbauthorization
+      - filebeatlogging
+      - logstashlogging
+      - elasticsearchlogging
+    deploy:
+      mode: replicated
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    environment:
+      WAIT_SLEEP_INTERVAL: 10
+      WAIT_HOSTS: zipkintracing:9411, rabbitmqmessaging:5672, configuration:10100, discovery:10200, redisdbauthorization:6379, mysqldbauthorization:3306
+      SERVER_PORT: 0
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_CONFIG_IMPORT: optional:configserver:http://root:root@configuration:10100
+    labels:
+      collect_logs_with_filebeat: "true"
+      decode_log_event_to_json_object: "true"
+      application_name: "authorization-service"
+    networks:
+      - microservices3
+
+  customer:
+    image: microservices3/customer-service
+    # hostname: customer
+    # container_name: customer
+    depends_on:
+      - configuration
+      - discovery
+      - gateway
+      - rabbitmqmessaging
+      - zipkintracing
+      - redisdbauthorization
+      - mysqldbcustomers
+      - filebeatlogging
+      - logstashlogging
+      - elasticsearchlogging
+    deploy:
+      mode: replicated
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    environment:
+      WAIT_SLEEP_INTERVAL: 10
+      WAIT_HOSTS: zipkintracing:9411, rabbitmqmessaging:5672, configuration:10100, discovery:10200, mysqldbcustomers:3306
+      SERVER_PORT: 0
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_CONFIG_IMPORT: optional:configserver:http://root:root@configuration:10100
+    labels:
+      collect_logs_with_filebeat: "true"
+      decode_log_event_to_json_object: "true"
+      application_name: "customer-service"
+    networks:
+      - microservices3
+
+  forniture:
+    image: microservices3/forniture-service
+    # hostname: forniture
+    # container_name: forniture
+    depends_on:
+      - configuration
+      - discovery
+      - gateway
+      - rabbitmqmessaging
+      - zipkintracing
+      - elasticsearchdbfornitures
+      - mysqldbfornitures
+      - filebeatlogging
+      - logstashlogging
+      - elasticsearchlogging
+    deploy:
+      mode: replicated
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    environment:
+      WAIT_HOSTS: zipkintracing:9411, rabbitmqmessaging:5672, configuration:10100, discovery:10200, elasticsearchdbfornitures:9200, mysqldbfornitures:3306
+      SERVER_PORT: 0
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_CONFIG_IMPORT: optional:configserver:http://root:root@configuration:10100
+    labels:
+      collect_logs_with_filebeat: "true"
+      decode_log_event_to_json_object: "true"
+      application_name: "forniture-service"
+    networks:
+      - microservices3
+
+  cart:
+    image: microservices3/cart-service
+    # hostname: cart
+    # container_name: cart
+    depends_on:
+      - configuration
+      - discovery
+      - gateway
+      - rabbitmqmessaging
+      - kafkamessaging
+      - zipkintracing
+      - redisdbcart
+      - filebeatlogging
+      - logstashlogging
+      - elasticsearchlogging
+    deploy:
+      mode: replicated
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    environment:
+      WAIT_HOSTS: zipkintracing:9411, rabbitmqmessaging:5672, configuration:10100, discovery:10200, redisdbcart:6379, kafkamessaging:9092
+      SERVER_PORT: 0
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_CONFIG_IMPORT: optional:configserver:http://root:root@configuration:10100
+    labels:
+      collect_logs_with_filebeat: "true"
+      decode_log_event_to_json_object: "true"
+      application_name: "cart-service"
+    networks:
+      - microservices3
+
+  payment:
+    image: microservices3/payment-service
+    # hostname: payment
+    # container_name: payment
+    depends_on:
+      - configuration
+      - discovery
+      - gateway
+      - rabbitmqmessaging
+      - kafkamessaging
+      - zipkintracing
+      - filebeatlogging
+      - logstashlogging
+      - elasticsearchlogging
+      - postgresqldbpayments
+    deploy:
+      mode: replicated
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    environment:
+      WAIT_HOSTS: zipkintracing:9411, rabbitmqmessaging:5672, configuration:10100, discovery:10200, redisdbcart:6379, kafkamessaging:9092, postgresqldbpayments:5432
+      SERVER_PORT: 0
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_CONFIG_IMPORT: optional:configserver:http://root:root@configuration:10100
+    labels:
+      collect_logs_with_filebeat: "true"
+      decode_log_event_to_json_object: "true"
+      application_name: "payment-service"
+    networks:
+      - microservices3
+
+  delivery:
+    image: microservices3/delivery-service
+    # hostname: delivery
+    # container_name: delivery
+    depends_on:
+      - configuration
+      - discovery
+      - gateway
+      - rabbitmqmessaging
+      - kafkamessaging
+      - zipkintracing
+      - redisdbcart
+      - filebeatlogging
+      - logstashlogging
+      - elasticsearchlogging
+      - mysqldbdelivery
+    deploy:
+      mode: replicated
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    environment:
+      WAIT_HOSTS: zipkintracing:9411, rabbitmqmessaging:5672, configuration:10100, discovery:10200, redisdbcart:6379, kafkamessaging:9092, postgresqldbpayments:5432, mysqldbdelivery:3306
+      SERVER_PORT: 0
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_CONFIG_IMPORT: optional:configserver:http://root:root@configuration:10100
+    labels:
+      collect_logs_with_filebeat: "true"
+      decode_log_event_to_json_object: "true"
+      application_name: "delivery-service"
+    networks:
+      - microservices3
+
+  support:
+    image: microservices3/support-service
+    # hostname: support
+    # container_name: support
+    depends_on:
+      - configuration
+      - discovery
+      - gateway
+      - rabbitmqmessaging
+      - zipkintracing
+      - redisdbcart
+      - filebeatlogging
+      - logstashlogging
+      - elasticsearchlogging
+      - mongodbsupport
+    deploy:
+      mode: replicated
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    environment:
+      WAIT_HOSTS: zipkintracing:9411, rabbitmqmessaging:5672, configuration:10100, discovery:10200, redisdbcart:6379, postgresqldbpayments:5432, mongodbsupport:27017
+      SERVER_PORT: 0
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_CONFIG_IMPORT: optional:configserver:http://root:root@configuration:10100
+    labels:
+      collect_logs_with_filebeat: "true"
+      decode_log_event_to_json_object: "true"
+      application_name: "support-service"
+    networks:
+      - microservices3
+
+networks:
+  microservices3:

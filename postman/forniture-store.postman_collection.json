@@ -1,0 +1,1044 @@
+{
+	"info": {
+		"_postman_id": "e75338a6-92cf-416c-b5f6-b9d520bbf0e5",
+		"name": "Forniture Store Microservices 3",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authorization Service",
+			"item": [
+				{
+					"name": "Get all roles",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjEsXCJjdXN0b21lcklkXCI6MCxcInVzZXJuYW1lXCI6XCJyb290XCIsXCJyb2xlc1wiOltcIkFkbWluaXN0cmF0b3JcIl0sXCJlbmFibGVkXCI6dHJ1ZSxcImFjY291bnROb25FeHBpcmVkXCI6dHJ1ZSxcImNyZWRlbnRpYWxzTm9uRXhwaXJlZFwiOnRydWUsXCJhY2NvdW50Tm9uTG9ja2VkXCI6dHJ1ZX0iLCJqdGkiOiJkMTdmMGJkZC0xYzRmLTQwYWItODk5Yy1jZDRmZmVjMTA3MjYiLCJpYXQiOjE2ODU2NTI1ODIsImV4cCI6MTY4NTY1NDM4Mn0.I-ngoAYkdGVmGzAFSxpFABgwXcTuPFEpdbpqSb5SD2Y",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:10300/roles",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "10300",
+							"path": [
+								"roles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login Root",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"root\",\r\n    \"password\": \"root\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:10300/authorization/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "10300",
+							"path": [
+								"authorization",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"johndoe\",\r\n    \"password\": \"123456\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:10300/authorization/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "10300",
+							"path": [
+								"authorization",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all credentials",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjEsXCJjdXN0b21lcklkXCI6MCxcInVzZXJuYW1lXCI6XCJyb290XCIsXCJyb2xlc1wiOltcIkFkbWluaXN0cmF0b3JcIl0sXCJlbmFibGVkXCI6dHJ1ZSxcImFjY291bnROb25FeHBpcmVkXCI6dHJ1ZSxcImNyZWRlbnRpYWxzTm9uRXhwaXJlZFwiOnRydWUsXCJhY2NvdW50Tm9uTG9ja2VkXCI6dHJ1ZX0iLCJqdGkiOiJjNmRhYzMxOS00NTJmLTQwYTctOTMwNi02ZjYwZmMxZDQ4ZWYiLCJpYXQiOjE2ODYzMTM0NTQsImV4cCI6MTY4NjMxNTI1NH0.4Ypgtfip49ICHMAn0Z6mTJ5V2LmdX0UkXgFB7EDUxEQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:10400/credentials/page?size=100",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "10400",
+							"path": [
+								"credentials",
+								"page"
+							],
+							"query": [
+								{
+									"key": "size",
+									"value": "100"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get credential by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjEwMyxcImN1c3RvbWVySWRcIjo4OSxcInVzZXJuYW1lXCI6XCJjYW1pbG8xMFwiLFwicm9sZXNcIjpbXCJHdWVzdFwiXSxcImVuYWJsZWRcIjp0cnVlLFwiYWNjb3VudE5vbkV4cGlyZWRcIjp0cnVlLFwiY3JlZGVudGlhbHNOb25FeHBpcmVkXCI6dHJ1ZSxcImFjY291bnROb25Mb2NrZWRcIjp0cnVlfSIsImlhdCI6MTY3ODI2MTE0MiwiZXhwIjoxNjc4MjYyOTQyfQ.2pIb2wTjn-I8DmqWzTsL1m13Fe3FY7Kt36jcZE0ngZk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:10400/api/v1/credentials/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "10400",
+							"path": [
+								"api",
+								"v1",
+								"credentials",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create credential",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"camilo10\",\n    \"password\": \"123456\",\n    \"customerId\": 89\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:10300/credentials",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "10300",
+							"path": [
+								"credentials"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update credential",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjEsXCJjdXN0b21lcklkXCI6MCxcInVzZXJuYW1lXCI6XCJyb290XCIsXCJyb2xlc1wiOltcIkFkbWluaXN0cmF0b3JcIl0sXCJlbmFibGVkXCI6dHJ1ZSxcImFjY291bnROb25FeHBpcmVkXCI6dHJ1ZSxcImNyZWRlbnRpYWxzTm9uRXhwaXJlZFwiOnRydWUsXCJhY2NvdW50Tm9uTG9ja2VkXCI6dHJ1ZX0iLCJpYXQiOjE2ODA5NDMzNDAsImV4cCI6MTY4MDk0NTE0MH0.KxH7OinLK3YJbxp50krCxfF48MuSL0kn6D66fByk6xQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"roles\": [\"Supporter\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:10400/credentials/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "10400",
+							"path": [
+								"credentials",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete credential",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjEwMixcImN1c3RvbWVySWRcIjo1LFwidXNlcm5hbWVcIjpcImthdGhkb2VcIixcInJvbGVzXCI6W1wiR3Vlc3RcIl0sXCJlbmFibGVkXCI6dHJ1ZSxcImFjY291bnROb25FeHBpcmVkXCI6dHJ1ZSxcImNyZWRlbnRpYWxzTm9uRXhwaXJlZFwiOnRydWUsXCJhY2NvdW50Tm9uTG9ja2VkXCI6dHJ1ZX0iLCJpYXQiOjE2NzU2ODgzMjUsImV4cCI6MTY3NTY5MDEyNX0.Nxxt9BqBDNj8WIQRR2bW-Le1oPJuSNdDxoFrkwbfuyU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:10400/api/v1/credentials/102",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "10400",
+							"path": [
+								"api",
+								"v1",
+								"credentials",
+								"102"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Revoke token",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:10400/api/v1/authorization/token/c78e2e76-42f0-4264-a7a0-48556a5fecf1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "10400",
+							"path": [
+								"api",
+								"v1",
+								"authorization",
+								"token",
+								"c78e2e76-42f0-4264-a7a0-48556a5fecf1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Revoke token by credential id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjIsXCJjdXN0b21lcklkXCI6ODYsXCJ1c2VybmFtZVwiOlwiam9obmRvZVwiLFwicm9sZXNcIjpbXCJHdWVzdFwiXSxcImVuYWJsZWRcIjp0cnVlLFwiYWNjb3VudE5vbkV4cGlyZWRcIjp0cnVlLFwiY3JlZGVudGlhbHNOb25FeHBpcmVkXCI6dHJ1ZSxcImFjY291bnROb25Mb2NrZWRcIjp0cnVlfSIsImlhdCI6MTY3NzU3MDk4OSwiZXhwIjoxNjc3NTcyNzg5fQ.UdtD4OmzrFtSJ_hZj57tOJ9LoGECyPWzjGfUsApXewk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:10400/api/v1/authorization/token/credential/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "10400",
+							"path": [
+								"api",
+								"v1",
+								"authorization",
+								"token",
+								"credential",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Customer Service",
+			"item": [
+				{
+					"name": "Get all customers",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjIsXCJjdXN0b21lcklkXCI6MSxcInVzZXJuYW1lXCI6XCJqb2huZG9lXCIsXCJyb2xlc1wiOltcIkN1c3RvbWVyXCJdLFwiZW5hYmxlZFwiOnRydWUsXCJhY2NvdW50Tm9uRXhwaXJlZFwiOnRydWUsXCJjcmVkZW50aWFsc05vbkV4cGlyZWRcIjp0cnVlLFwiYWNjb3VudE5vbkxvY2tlZFwiOnRydWV9IiwianRpIjoiZWM1ZjE2MGQtNjY0MS00Nzc0LWJlMTUtODIwMDk1ZDA1YzZhIiwiaWF0IjoxNjg2MzEzNDg1LCJleHAiOjE2ODYzMTUyODV9.2FFEID0qoTqRcf6IubZs9dEopeoCzfImjbZFKGbGHuE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:10300/customers/current",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "10300",
+							"path": [
+								"customers",
+								"current"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get customer current",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjI1MyxcImN1c3RvbWVySWRcIjo0NTMsXCJ1c2VybmFtZVwiOlwic2FyYTZcIixcInJvbGVzXCI6W1wiQ3VzdG9tZXJcIl0sXCJlbmFibGVkXCI6dHJ1ZSxcImFjY291bnROb25FeHBpcmVkXCI6dHJ1ZSxcImNyZWRlbnRpYWxzTm9uRXhwaXJlZFwiOnRydWUsXCJhY2NvdW50Tm9uTG9ja2VkXCI6dHJ1ZX0iLCJqdGkiOiI2MGRjZTI0MC05OTgwLTRiNWMtYWRkMC01M2Q3ZDk4ZGFiNTciLCJpYXQiOjE2ODU2NTI0NjUsImV4cCI6MTY4NTY1NDI2NX0.iASEiAyFxbvHIIZ5hVz22DWICNXUR68Bsp8Qtz-t-Ks",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:10300/customers/current",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "10300",
+							"path": [
+								"customers",
+								"current"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get customer by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjEsXCJjdXN0b21lcklkXCI6MCxcInVzZXJuYW1lXCI6XCJyb290XCIsXCJyb2xlc1wiOltcIkFkbWluaXN0cmF0b3JcIl0sXCJlbmFibGVkXCI6dHJ1ZSxcImFjY291bnROb25FeHBpcmVkXCI6dHJ1ZSxcImNyZWRlbnRpYWxzTm9uRXhwaXJlZFwiOnRydWUsXCJhY2NvdW50Tm9uTG9ja2VkXCI6dHJ1ZX0iLCJpYXQiOjE2ODA0MzM1NzcsImV4cCI6MTY4MDUzMzU3N30.4WmVYsQBrI2ztbq0DJvajv-m0M2GS5yxYz-GImL5z5E",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:10300/customers/id/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "10300",
+							"path": [
+								"customers",
+								"id",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create customer",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"johndoe\",\n    \"password\": \"123456\",\n    \"firstName\": \"John\",\n    \"lastName\": \"Doe\",\n    \"email\": \"johndoe@mail.com\",\n    \"phone\": \"+1234567890\",\n    \"addressLine1\": \"Castle\",\n    \"addressLine2\": \"Tower 3\",\n    \"country\": \"Another World\",\n    \"city\": \"Hyrule\",\n    \"postalCode\": \"333\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:10300/customers",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "10300",
+							"path": [
+								"customers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update customer",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"Zelda1\",\n    \"lastName\": \"The Princess1\",\n    \"email\": \"zelda@gmail.com3\",\n    \"phone\": \"+3456765755623\",\n    \"addressLine1\": \"Castle1\",\n    \"addressLine2\": \"Tower 31\",\n    \"country\": \"Another World1\",\n    \"city\": \"Hyrule1\",\n    \"postalCode\": \"3331\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:10300/customers/152",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "10300",
+							"path": [
+								"customers",
+								"152"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete customer",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjI1MixcImN1c3RvbWVySWRcIjo0NTIsXCJ1c2VybmFtZVwiOlwic2FyYTZcIixcInJvbGVzXCI6W1wiQ3VzdG9tZXJcIl0sXCJlbmFibGVkXCI6dHJ1ZSxcImFjY291bnROb25FeHBpcmVkXCI6dHJ1ZSxcImNyZWRlbnRpYWxzTm9uRXhwaXJlZFwiOnRydWUsXCJhY2NvdW50Tm9uTG9ja2VkXCI6dHJ1ZX0iLCJqdGkiOiJhM2MyYWUyNi0wMWFjLTRjYWItOWU1NC0zZGU2NGYxYmU3ZWQiLCJpYXQiOjE2ODU2NTIzNjMsImV4cCI6MTY4NTY1NDE2M30.2ALwMvG_4iebK-8pFC3DM1JTtnRnCfevYO5pul9X_dM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:10300/customers/452",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "10300",
+							"path": [
+								"customers",
+								"452"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Forniture Service",
+			"item": [
+				{
+					"name": "Get all fornitures",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:10300/fornitures",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "10300",
+							"path": [
+								"fornitures"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get forniture by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:10300fornitures/teWITIYBMboxnfyeLNWF",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "10300fornitures",
+							"path": [
+								"teWITIYBMboxnfyeLNWF"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create forniture",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjEsXCJjdXN0b21lcklkXCI6MCxcInVzZXJuYW1lXCI6XCJyb290XCIsXCJyb2xlc1wiOltcIkFkbWluaXN0cmF0b3JcIl0sXCJlbmFibGVkXCI6dHJ1ZSxcImFjY291bnROb25FeHBpcmVkXCI6dHJ1ZSxcImNyZWRlbnRpYWxzTm9uRXhwaXJlZFwiOnRydWUsXCJhY2NvdW50Tm9uTG9ja2VkXCI6dHJ1ZX0iLCJqdGkiOiJjNmRhYzMxOS00NTJmLTQwYTctOTMwNi02ZjYwZmMxZDQ4ZWYiLCJpYXQiOjE2ODYzMTM0NTQsImV4cCI6MTY4NjMxNTI1NH0.4Ypgtfip49ICHMAn0Z6mTJ5V2LmdX0UkXgFB7EDUxEQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Forniture 2\",\n    \"description\": \"Description 2\",\n    \"price\": 99.99,\n    \"smallPicturePath\": \"/pictures/small/2\",\n    \"largePicturePath\": \"/pictures/large/2\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:10300/fornitures",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "10300",
+							"path": [
+								"fornitures"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update forniture",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjEsXCJjdXN0b21lcklkXCI6MCxcInVzZXJuYW1lXCI6XCJyb290XCIsXCJyb2xlc1wiOltcIkFkbWluaXN0cmF0b3JcIl0sXCJlbmFibGVkXCI6dHJ1ZSxcImFjY291bnROb25FeHBpcmVkXCI6dHJ1ZSxcImNyZWRlbnRpYWxzTm9uRXhwaXJlZFwiOnRydWUsXCJhY2NvdW50Tm9uTG9ja2VkXCI6dHJ1ZX0iLCJpYXQiOjE2NzcyMjc1NzksImV4cCI6MTY3NzIyOTM3OX0.Gn6ISjhrqh30tXoa0Ih_cSM5vbW3WcYwamQm6b1Rpxw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Forniture 23\",\n    \"description\": \"Description 23\",\n    \"price\": 99.99,\n    \"smallPicturePath\": \"/pictures/small/2\",\n    \"largePicturePath\": \"/pictures/large/2\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:10300/fornitures/j32OgoYBVVyO56oiBl5M",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "10300",
+							"path": [
+								"fornitures",
+								"j32OgoYBVVyO56oiBl5M"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete forniture",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjEsXCJjdXN0b21lcklkXCI6MCxcInVzZXJuYW1lXCI6XCJyb290XCIsXCJyb2xlc1wiOltcIkFkbWluaXN0cmF0b3JcIl0sXCJlbmFibGVkXCI6dHJ1ZSxcImFjY291bnROb25FeHBpcmVkXCI6dHJ1ZSxcImNyZWRlbnRpYWxzTm9uRXhwaXJlZFwiOnRydWUsXCJhY2NvdW50Tm9uTG9ja2VkXCI6dHJ1ZX0iLCJpYXQiOjE2NzcyMjc1NzksImV4cCI6MTY3NzIyOTM3OX0.Gn6ISjhrqh30tXoa0Ih_cSM5vbW3WcYwamQm6b1Rpxw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:10300/fornitures/j32OgoYBVVyO56oiBl5M",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "10300",
+							"path": [
+								"fornitures",
+								"j32OgoYBVVyO56oiBl5M"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cart Service",
+			"item": [
+				{
+					"name": "Get cart by customer",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjIsXCJjdXN0b21lcklkXCI6MSxcInVzZXJuYW1lXCI6XCJqb2huZG9lXCIsXCJyb2xlc1wiOltcIkN1c3RvbWVyXCJdLFwiZW5hYmxlZFwiOnRydWUsXCJhY2NvdW50Tm9uRXhwaXJlZFwiOnRydWUsXCJjcmVkZW50aWFsc05vbkV4cGlyZWRcIjp0cnVlLFwiYWNjb3VudE5vbkxvY2tlZFwiOnRydWV9IiwianRpIjoiZWM1ZjE2MGQtNjY0MS00Nzc0LWJlMTUtODIwMDk1ZDA1YzZhIiwiaWF0IjoxNjg2MzEzNDg1LCJleHAiOjE2ODYzMTUyODV9.2FFEID0qoTqRcf6IubZs9dEopeoCzfImjbZFKGbGHuE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:10300/carts/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "10300",
+							"path": [
+								"carts",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create cart",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjIsXCJjdXN0b21lcklkXCI6MSxcInVzZXJuYW1lXCI6XCJqb2huZG9lXCIsXCJyb2xlc1wiOltcIkN1c3RvbWVyXCJdLFwiZW5hYmxlZFwiOnRydWUsXCJhY2NvdW50Tm9uRXhwaXJlZFwiOnRydWUsXCJjcmVkZW50aWFsc05vbkV4cGlyZWRcIjp0cnVlLFwiYWNjb3VudE5vbkxvY2tlZFwiOnRydWV9IiwianRpIjoiMDY3MTY5ZTAtYTA3My00YmE2LTgzOGMtZjFmODlhODc1NjA4IiwiaWF0IjoxNjg2MzE3ODE5LCJleHAiOjE2ODYzMTk2MTl9.uDGRWlB1M342anm9bpaFlcBaTmJRN_2ap8rDgOqoU-A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"customerId\": 1,\n    \"fornitures\": {\n        \"hrUeoIgBmq1a9V0hPNRI\": 2\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:10300/carts",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "10300",
+							"path": [
+								"carts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update cart",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjIsXCJjdXN0b21lcklkXCI6ODYsXCJ1c2VybmFtZVwiOlwiam9obmRvZVwiLFwicm9sZXNcIjpbXCJHdWVzdFwiXSxcImVuYWJsZWRcIjp0cnVlLFwiYWNjb3VudE5vbkV4cGlyZWRcIjp0cnVlLFwiY3JlZGVudGlhbHNOb25FeHBpcmVkXCI6dHJ1ZSxcImFjY291bnROb25Mb2NrZWRcIjp0cnVlfSIsImlhdCI6MTY3NzIyNzc3OSwiZXhwIjoxNjc3MjI5NTc5fQ.DV74L6qokXMuvJ7B5TNak--ETQH0YpL_qDnBf3pSyLE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fornitures\": {\n        \"item1\": 4,\n        \"item5\": 1\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:10300/carts/86",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "10300",
+							"path": [
+								"carts",
+								"86"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete cart",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjIsXCJjdXN0b21lcklkXCI6ODYsXCJ1c2VybmFtZVwiOlwiam9obmRvZVwiLFwicm9sZXNcIjpbXCJHdWVzdFwiXSxcImVuYWJsZWRcIjp0cnVlLFwiYWNjb3VudE5vbkV4cGlyZWRcIjp0cnVlLFwiY3JlZGVudGlhbHNOb25FeHBpcmVkXCI6dHJ1ZSxcImFjY291bnROb25Mb2NrZWRcIjp0cnVlfSIsImlhdCI6MTY3NzIyNzc3OSwiZXhwIjoxNjc3MjI5NTc5fQ.DV74L6qokXMuvJ7B5TNak--ETQH0YpL_qDnBf3pSyLE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:10300/carts/86",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "10300",
+							"path": [
+								"carts",
+								"86"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Checkout Cart",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjIsXCJjdXN0b21lcklkXCI6MSxcInVzZXJuYW1lXCI6XCJqb2huZG9lXCIsXCJyb2xlc1wiOltcIkN1c3RvbWVyXCJdLFwiZW5hYmxlZFwiOnRydWUsXCJhY2NvdW50Tm9uRXhwaXJlZFwiOnRydWUsXCJjcmVkZW50aWFsc05vbkV4cGlyZWRcIjp0cnVlLFwiYWNjb3VudE5vbkxvY2tlZFwiOnRydWV9IiwianRpIjoiMDY3MTY5ZTAtYTA3My00YmE2LTgzOGMtZjFmODlhODc1NjA4IiwiaWF0IjoxNjg2MzE3ODE5LCJleHAiOjE2ODYzMTk2MTl9.uDGRWlB1M342anm9bpaFlcBaTmJRN_2ap8rDgOqoU-A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"number\": \"1212\",\n    \"month\": 11,\n    \"year\": 55,\n    \"cvv\": 123\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:10300/carts/checkout/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "10300",
+							"path": [
+								"carts",
+								"checkout",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Payment Service",
+			"item": []
+		},
+		{
+			"name": "Currier Service",
+			"item": []
+		},
+		{
+			"name": "Support Service",
+			"item": [
+				{
+					"name": "Request support",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjIsXCJjdXN0b21lcklkXCI6MSxcInVzZXJuYW1lXCI6XCJjYW1pbG9cIixcInJvbGVzXCI6W1wiQ3VzdG9tZXJcIl0sXCJlbmFibGVkXCI6dHJ1ZSxcImFjY291bnROb25FeHBpcmVkXCI6dHJ1ZSxcImNyZWRlbnRpYWxzTm9uRXhwaXJlZFwiOnRydWUsXCJhY2NvdW50Tm9uTG9ja2VkXCI6dHJ1ZX0iLCJpYXQiOjE2ODA5NzE2ODQsImV4cCI6MTY4MDk3MzQ4NH0.1_cpKLYwS0i6E6XRHy4fhWcj21wIoGxUqWLMJwgSvls",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:10800/support/request",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "10800",
+							"path": [
+								"support",
+								"request"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Response support",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjMsXCJjdXN0b21lcklkXCI6MixcInVzZXJuYW1lXCI6XCJsaW5rXCIsXCJyb2xlc1wiOltcIlN1cHBvcnRlclwiXSxcImVuYWJsZWRcIjp0cnVlLFwiYWNjb3VudE5vbkV4cGlyZWRcIjp0cnVlLFwiY3JlZGVudGlhbHNOb25FeHBpcmVkXCI6dHJ1ZSxcImFjY291bnROb25Mb2NrZWRcIjp0cnVlfSIsImlhdCI6MTY4MDk0MzQxMSwiZXhwIjoxNjgwOTQ1MjExfQ.EFf1CmnBJnWZleTur3WRKmKJjVnn51OvGaGSyj90lrM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:10800/support/response/189a2de9-a7e4-4922-b815-6f02554c9b75",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "10800",
+							"path": [
+								"support",
+								"response",
+								"189a2de9-a7e4-4922-b815-6f02554c9b75"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Monitor chat",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjIsXCJjdXN0b21lcklkXCI6MSxcInVzZXJuYW1lXCI6XCJjYW1pbG9cIixcInJvbGVzXCI6W1wiQ3VzdG9tZXJcIl0sXCJlbmFibGVkXCI6dHJ1ZSxcImFjY291bnROb25FeHBpcmVkXCI6dHJ1ZSxcImNyZWRlbnRpYWxzTm9uRXhwaXJlZFwiOnRydWUsXCJhY2NvdW50Tm9uTG9ja2VkXCI6dHJ1ZX0iLCJpYXQiOjE2ODA5Nzk0MDUsImV4cCI6MTY4MDk4MTIwNX0.-yEfWTaR5cs18pR4dy5CmeH3jCt6zX1IQtRfc53tgwk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/stream+json",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:10800/support/monitor/chat/64319896b20290679b1b7db1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "10800",
+							"path": [
+								"support",
+								"monitor",
+								"chat",
+								"64319896b20290679b1b7db1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Send message",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjIsXCJjdXN0b21lcklkXCI6MSxcInVzZXJuYW1lXCI6XCJjYW1pbG9cIixcInJvbGVzXCI6W1wiQ3VzdG9tZXJcIl0sXCJlbmFibGVkXCI6dHJ1ZSxcImFjY291bnROb25FeHBpcmVkXCI6dHJ1ZSxcImNyZWRlbnRpYWxzTm9uRXhwaXJlZFwiOnRydWUsXCJhY2NvdW50Tm9uTG9ja2VkXCI6dHJ1ZX0iLCJpYXQiOjE2ODA5Nzk0MDUsImV4cCI6MTY4MDk4MTIwNX0.-yEfWTaR5cs18pR4dy5CmeH3jCt6zX1IQtRfc53tgwk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:10800/support/chat/64319896b20290679b1b7db1/messages",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "10800",
+							"path": [
+								"support",
+								"chat",
+								"64319896b20290679b1b7db1",
+								"messages"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Monitor chat messages",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjIsXCJjdXN0b21lcklkXCI6MSxcInVzZXJuYW1lXCI6XCJjYW1pbG9cIixcInJvbGVzXCI6W1wiQ3VzdG9tZXJcIl0sXCJlbmFibGVkXCI6dHJ1ZSxcImFjY291bnROb25FeHBpcmVkXCI6dHJ1ZSxcImNyZWRlbnRpYWxzTm9uRXhwaXJlZFwiOnRydWUsXCJhY2NvdW50Tm9uTG9ja2VkXCI6dHJ1ZX0iLCJpYXQiOjE2ODA5Nzk0MDUsImV4cCI6MTY4MDk4MTIwNX0.-yEfWTaR5cs18pR4dy5CmeH3jCt6zX1IQtRfc53tgwk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:10800/support/monitor/chat/64319896b20290679b1b7db1/messages",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "10800",
+							"path": [
+								"support",
+								"monitor",
+								"chat",
+								"64319896b20290679b1b7db1",
+								"messages"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

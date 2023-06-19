@@ -1,0 +1,5 @@
+FROM openjdk:17-jdk-slim
+COPY build/libs/forniture-service-0.0.1.jar forniture-service-0.0.1.jar
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.9.0/wait /wait
+RUN chmod +x /wait
+CMD /wait && java -jar /forniture-service-0.0.1.jar

@@ -1,0 +1,69 @@
+server:
+  port: 0
+
+logging:
+  level:
+    root: info
+    org.xapps.services: debug
+
+spring:
+  application:
+    name: fornitureservice
+
+  elasticsearch:
+    uris: http://elasticsearchdbfornitures:9200
+    username: forniture
+    password: forniture
+
+  datasource:
+    url: jdbc:mysql://mysqldbfornitures:3306/comments_db?serverTimezone=UTC
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+  cloud:
+    bus:
+      enabled: true
+      env:
+        enabled: true
+      refresh:
+        enabled: true
+
+  rabbitmq:
+    host: rabbitmqmessaging
+    port: 5672
+    username: root
+    password: root
+
+security:
+  origins:
+    urls: "*"
+    maxAge: 3600
+    allowedMethods: GET, POST, PUT, DELETE
+    allowedHeaders: Origin, Content-Type, Accept, Authorization
+  jwtGeneration:
+    key: qwerty123456
+    type: Bearer
+
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    serviceUrl:
+      defaultZone: http://root:root@discovery:10200/eureka
+    registerWithEureka: true
+    fetchRegistry: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://zipkintracing:9411/api/v2/spans

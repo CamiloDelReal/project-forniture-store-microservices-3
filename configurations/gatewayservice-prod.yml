@@ -1,0 +1,59 @@
+server:
+  port: 10300
+
+logging:
+  level:
+    root: info
+    org.xapps.services: debug
+
+spring:
+  application:
+    name: gatewayservice
+
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lowerCaseServiceId: true
+
+    bus:
+      enabled: true
+      env:
+        enabled: true
+      refresh:
+        enabled: true
+
+  rabbitmq:
+    host: rabbitmqmessaging
+    port: 5672
+    username: root
+    password: root
+
+eureka:
+  instance:
+    preferIpAddress: false
+  client:
+    serviceUrl:
+      defaultZone: http://root:root@discovery:10200/eureka
+    registerWithEureka: true
+    fetchRegistry: true
+
+security:
+  origins:
+    urls: "*"
+    maxAge: 3600
+    allowedMethods: GET, POST, PUT, DELETE, PATCH, OPTIONS, HEAD
+    allowedHeaders: "*"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://zipkintracing:9411/api/v2/spans

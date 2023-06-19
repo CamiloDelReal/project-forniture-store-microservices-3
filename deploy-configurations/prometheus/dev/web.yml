@@ -1,0 +1,2 @@
+basic_auth_users:
+  root: $2a$12$6P0GEL4p4The7QbWL3lKtePx6viFIr4yfyGy5M8ELk.g4BlrLhWFC  # guest

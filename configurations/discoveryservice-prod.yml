@@ -1,0 +1,50 @@
+server:
+  port: 10200
+
+logging:
+  level:
+    root: info
+    org.xapps.services: debug
+
+spring:
+  application:
+    name: discoveryservice
+  security:
+    user:
+      name: root
+      password: root
+
+  cloud:
+    bus:
+      enabled: true
+      env:
+        enabled: true
+      refresh:
+        enabled: true
+
+  rabbitmq:
+    host: rabbitmqmessaging
+    port: 5672
+    username: root
+    password: root
+
+eureka:
+  instance:
+    hostname: discovery
+  client:
+    serviceUrl:
+      defaultZone: http://root:root@discovery:10200/eureka
+    registerWithEureka: false
+    fetchRegistry: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://zipkintracing:9411/api/v2/spans
