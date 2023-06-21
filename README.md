@@ -33,10 +33,12 @@ Microservices-based application
   * Validation
   * Actuator
   * JPA
+  * R2DBC
   * WebFlux
   * Messaging
   * Retry
   * WebClient
+  * Micrometer
 - Spring Cloud
   * Configuration service
   * Discovery service
@@ -69,6 +71,7 @@ Microservices-based application
   * Deployment
 - Test
   * JUnit5
+  * TestNG
   * TestContainers
   * WireMock
 
