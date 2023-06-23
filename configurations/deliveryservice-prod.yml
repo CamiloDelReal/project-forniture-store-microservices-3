@@ -81,7 +81,11 @@ management:
 
 customer:
   service:
-    url: customer-service
+    url: customerservice
+
+authorization:
+  service:
+    url: authorizationservice
 
 circuitBreaker:
   breaker:

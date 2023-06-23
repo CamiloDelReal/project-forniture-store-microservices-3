@@ -8,10 +8,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
-import org.xapps.services.authorizationservice.dtos.Authorization
-import org.xapps.services.authorizationservice.dtos.Login
-import org.xapps.services.authorizationservice.dtos.TokenResponse
-import org.xapps.services.authorizationservice.dtos.TokenValidateRequest
+import org.xapps.services.authorizationservice.dtos.*
 import org.xapps.services.authorizationservice.entities.Credential
 import org.xapps.services.authorizationservice.services.AuthorizationService
 import org.xapps.services.authorizationservice.services.CredentialService
@@ -29,20 +26,15 @@ class AuthorizationController @Autowired constructor(
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
-    fun login(@Valid @RequestBody login: Login): ResponseEntity<Authorization> {
-        LOG.debug("Login requested")
-        return ResponseEntity.ok(authorizationService.login(login))
-    }
+    fun login(@Valid @RequestBody login: Login): ResponseEntity<Authorization> =
+        ResponseEntity.ok(authorizationService.login(login))
 
     @PostMapping(
         path = ["/token/validate"],
         consumes = [MediaType.APPLICATION_JSON_VALUE]
     )
-    fun validate(@Valid @RequestBody request: TokenValidateRequest): ResponseEntity<Void> {
-        LOG.debug("Token validation requested")
-        authorizationService.isAuthorizationValid(request.value)
-        return ResponseEntity.ok().build()
-    }
+    fun validate(@Valid @RequestBody request: TokenValidateRequest): ResponseEntity<CredentialResponse> =
+        ResponseEntity.ok(authorizationService.isAuthorizationValid(request.value))
 
     @GetMapping(
         path = ["/token/customer/{customerId}"],
@@ -64,10 +56,8 @@ class AuthorizationController @Autowired constructor(
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
     @PreAuthorize("isAuthenticated() and hasAuthority('Administrator') or isAuthenticated() and principal.id == #id")
-    fun readAllTokenByCredential(@PathVariable("id") id: Long): ResponseEntity<List<TokenResponse>> {
-        LOG.debug("Credential $id tokens requested")
-        return ResponseEntity.ok(authorizationService.readAllTokenByCredential(id))
-    }
+    fun readAllTokenByCredential(@PathVariable("id") id: Long): ResponseEntity<List<TokenResponse>> =
+        ResponseEntity.ok(authorizationService.readAllTokenByCredential(id))
 
     @DeleteMapping(
         path = ["/token/{id}"]

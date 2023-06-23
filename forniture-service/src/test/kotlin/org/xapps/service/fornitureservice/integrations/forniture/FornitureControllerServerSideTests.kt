@@ -1,9 +1,11 @@
 package org.xapps.service.fornitureservice.integrations.forniture
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.github.tomakehurst.wiremock.client.WireMock
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.test.context.DynamicPropertyRegistry
@@ -21,12 +23,14 @@ import org.xapps.service.fornitureservice.common.Utils
 import org.xapps.service.fornitureservice.dtos.FornitureCreateRequest
 import org.xapps.service.fornitureservice.dtos.FornitureResponse
 import org.xapps.service.fornitureservice.dtos.FornitureUpdateRequest
+import org.xapps.service.fornitureservice.security.Credential
 import org.xapps.service.fornitureservice.security.SecurityParams
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
 @EnableWebMvc
 @AutoConfigureMockMvc
+@AutoConfigureWireMock(port = 0)
 class FornitureControllerServerSideTests : AbstractTestNGSpringContextTests() {
 
     @Autowired
@@ -46,6 +50,13 @@ class FornitureControllerServerSideTests : AbstractTestNGSpringContextTests() {
             price = 250.89f,
             smallPicturePath = "/smallpictures/100",
             largePicturePath = "/largepictures/100"
+        )
+        WireMock.stubFor(
+            WireMock.post(WireMock.urlEqualTo("/authorization/token/validate"))
+            .willReturn(
+                WireMock.aResponse()
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .withBody(mapper.writeValueAsString(Credential(33,"user", listOf("Administrator")))))
         )
         mockMvc.perform(post("/fornitures")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -86,6 +97,12 @@ class FornitureControllerServerSideTests : AbstractTestNGSpringContextTests() {
             smallPicturePath = "/smallpictures/102",
             largePicturePath = "/largepictures/102"
         )
+        WireMock.stubFor(WireMock.post(WireMock.urlEqualTo("/authorization/token/validate"))
+            .willReturn(
+                WireMock.aResponse()
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .withBody(mapper.writeValueAsString(Credential(33,"user", listOf("Administrator")))))
+        )
         val response = mockMvc.perform(post("/fornitures")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -122,6 +139,12 @@ class FornitureControllerServerSideTests : AbstractTestNGSpringContextTests() {
             smallPicturePath = "/smallpictures/103",
             largePicturePath = "/largepictures/104"
         )
+        WireMock.stubFor(WireMock.post(WireMock.urlEqualTo("/authorization/token/validate"))
+            .willReturn(
+                WireMock.aResponse()
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .withBody(mapper.writeValueAsString(Credential(33,"user", listOf("Administrator")))))
+        )
         val response = mockMvc.perform(post("/fornitures")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -149,6 +172,12 @@ class FornitureControllerServerSideTests : AbstractTestNGSpringContextTests() {
             smallPicturePath = "/smallpictures/104",
             largePicturePath = "/largepictures/104"
         )
+        WireMock.stubFor(WireMock.post(WireMock.urlEqualTo("/authorization/token/validate"))
+            .willReturn(
+                WireMock.aResponse()
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .withBody(mapper.writeValueAsString(Credential(33,"user", listOf("Administrator")))))
+        )
         val response = mockMvc.perform(post("/fornitures")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -173,6 +202,12 @@ class FornitureControllerServerSideTests : AbstractTestNGSpringContextTests() {
             smallPicturePath = "/smallpictures/105",
             largePicturePath = "/largepictures/105"
         )
+        WireMock.stubFor(WireMock.post(WireMock.urlEqualTo("/authorization/token/validate"))
+            .willReturn(
+                WireMock.aResponse()
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .withBody(mapper.writeValueAsString(Credential(33,"user", listOf("Administrator")))))
+        )
         val response = mockMvc.perform(post("/fornitures")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -195,6 +230,12 @@ class FornitureControllerServerSideTests : AbstractTestNGSpringContextTests() {
             price = 590.50f,
             smallPicturePath = "/smallpictures/106",
             largePicturePath = "/largepictures/106"
+        )
+        WireMock.stubFor(WireMock.post(WireMock.urlEqualTo("/authorization/token/validate"))
+            .willReturn(
+                WireMock.aResponse()
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .withBody(mapper.writeValueAsString(Credential(33,"user", listOf("Administrator")))))
         )
         val response = mockMvc.perform(post("/fornitures")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -241,6 +282,12 @@ class FornitureControllerServerSideTests : AbstractTestNGSpringContextTests() {
             smallPicturePath = "/smallpictures/108",
             largePicturePath = "/largepictures/108"
         )
+        WireMock.stubFor(WireMock.post(WireMock.urlEqualTo("/authorization/token/validate"))
+            .willReturn(
+                WireMock.aResponse()
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .withBody(mapper.writeValueAsString(Credential(33,"user", listOf("Administrator")))))
+        )
         val response1 = mockMvc.perform(post("/fornitures")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -282,6 +329,7 @@ class FornitureControllerServerSideTests : AbstractTestNGSpringContextTests() {
             registry.add("spring.datasource.username") { Containers.MYSQL_CONTAINER.username }
             registry.add("spring.datasource.password") { Containers.MYSQL_CONTAINER.password }
             registry.add("spring.elasticsearch.uris") { Containers.ELASTICSEARCH_CONTAINER.httpHostAddress }
+            registry.add("authorization.service.url") { "localhost:\${wiremock.server.port}" }
         }
     }
 }

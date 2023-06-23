@@ -3,6 +3,7 @@ package org.xapps.services.paymentservice
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.runApplication
+import org.springframework.cloud.openfeign.EnableFeignClients
 import org.springframework.data.r2dbc.repository.config.EnableR2dbcRepositories
 import org.xapps.services.paymentservice.security.SecurityParams
 
@@ -11,6 +12,7 @@ import org.xapps.services.paymentservice.security.SecurityParams
     SecurityParams::class
 )
 @EnableR2dbcRepositories
+@EnableFeignClients
 class PaymentServiceApplication
 
 fun main(args: Array<String>) {

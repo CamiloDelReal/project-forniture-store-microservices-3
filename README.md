@@ -81,22 +81,15 @@ Microservices-based application
 - Docker compose deployment script
 
 ### ToDoS
-- Customer service
-  * Change authz filter to revalidate token using authorization-service
 - Forniture service
   * Forniture seeder
-  * Change authz filter to revalidate token using authorization-service
 - Cart service
-  * hange authz filter to revalidate token using authorization-service
   * Integration tests for messaging
 - Payment service
-  * Change authz filter to revalidate token using authorization-service
   * Integration tests for messaging
 - Delivery service
-  * Change authz filter to revalidate token using authorization-service
   * Integration tests
 - Support service
-  * Change authz filter to revalidate token using authorization-service
   * Integration tests for chat monitoring endpoint
 - Finishing Postman collection
 - Web UI

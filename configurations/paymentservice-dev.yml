@@ -86,3 +86,7 @@ payments:
     retryMaxAttempts: 10
     retryMinBackoff: 1000
     retryMaxBackoff: 5000
+
+authorization:
+  service:
+    url: authorizationservice

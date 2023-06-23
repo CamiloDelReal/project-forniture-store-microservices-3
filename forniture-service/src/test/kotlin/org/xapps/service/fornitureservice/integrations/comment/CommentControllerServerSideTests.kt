@@ -1,10 +1,14 @@
 package org.xapps.service.fornitureservice.integrations.comment
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.github.tomakehurst.wiremock.client.WireMock
+import com.github.tomakehurst.wiremock.client.WireMock.aResponse
+import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
 import org.junit.jupiter.api.Order
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.test.context.DynamicPropertyRegistry
@@ -22,12 +26,14 @@ import org.testng.annotations.Test
 import org.xapps.service.fornitureservice.common.Containers
 import org.xapps.service.fornitureservice.common.Utils
 import org.xapps.service.fornitureservice.dtos.*
+import org.xapps.service.fornitureservice.security.Credential
 import org.xapps.service.fornitureservice.security.SecurityParams
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
 @EnableWebMvc
 @AutoConfigureMockMvc
+@AutoConfigureWireMock(port = 0)
 class CommentControllerServerSideTests: AbstractTestNGSpringContextTests() {
 
     @Autowired
@@ -49,6 +55,11 @@ class CommentControllerServerSideTests: AbstractTestNGSpringContextTests() {
             price = 250.89f,
             smallPicturePath = "/smallpictures/100",
             largePicturePath = "/largepictures/100"
+        )
+        WireMock.stubFor(WireMock.post(urlEqualTo("/authorization/token/validate"))
+            .willReturn(aResponse()
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .withBody(mapper.writeValueAsString(Credential(33,"user", listOf("Administrator")))))
         )
         forniture = mockMvc.perform(post("/fornitures")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -95,6 +106,11 @@ class CommentControllerServerSideTests: AbstractTestNGSpringContextTests() {
             evaluation = 8,
             value = "This is a comment"
         )
+        WireMock.stubFor(WireMock.post(urlEqualTo("/authorization/token/validate"))
+            .willReturn(aResponse()
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .withBody(mapper.writeValueAsString(Credential(customerId,"user", listOf("Administrator")))))
+        )
         comment = mockMvc.perform(post("/comments")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -122,6 +138,11 @@ class CommentControllerServerSideTests: AbstractTestNGSpringContextTests() {
             evaluation = 10,
             value = "This is a 10 comment"
         )
+        WireMock.stubFor(WireMock.post(urlEqualTo("/authorization/token/validate"))
+            .willReturn(aResponse()
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .withBody(mapper.writeValueAsString(Credential(100,"user", listOf("Guest")))))
+        )
         mockMvc.perform(post("/comments")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -145,6 +166,11 @@ class CommentControllerServerSideTests: AbstractTestNGSpringContextTests() {
             customerId = 101,
             evaluation = 10,
             value = "This is a comment"
+        )
+        WireMock.stubFor(WireMock.post(urlEqualTo("/authorization/token/validate"))
+            .willReturn(aResponse()
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .withBody(mapper.writeValueAsString(Credential(101,"user", listOf("Guest")))))
         )
         mockMvc.perform(post("/comments")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -176,6 +202,11 @@ class CommentControllerServerSideTests: AbstractTestNGSpringContextTests() {
             customerId = 102,
             evaluation = 10,
             value = "This is a comment"
+        )
+        WireMock.stubFor(WireMock.post(urlEqualTo("/authorization/token/validate"))
+            .willReturn(aResponse()
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .withBody(mapper.writeValueAsString(Credential(customerId,"user", listOf("Guest")))))
         )
         mockMvc.perform(post("/comments")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -209,6 +240,11 @@ class CommentControllerServerSideTests: AbstractTestNGSpringContextTests() {
             evaluation = 3,
             value = "This is another comment"
         )
+        WireMock.stubFor(WireMock.post(urlEqualTo("/authorization/token/validate"))
+            .willReturn(aResponse()
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .withBody(mapper.writeValueAsString(Credential(200,"user", listOf("Guest")))))
+        )
         mockMvc.perform(put("/comments/${comment.id}")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -225,6 +261,11 @@ class CommentControllerServerSideTests: AbstractTestNGSpringContextTests() {
         val commentRequest = CommentUpdateRequest(
             evaluation = 7,
             value = "This is an updated comment"
+        )
+        WireMock.stubFor(WireMock.post(urlEqualTo("/authorization/token/validate"))
+            .willReturn(aResponse()
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .withBody(mapper.writeValueAsString(Credential(33,"user", listOf("Administrator")))))
         )
         comment = mockMvc.perform(put("/comments/${comment.id}")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -251,6 +292,11 @@ class CommentControllerServerSideTests: AbstractTestNGSpringContextTests() {
             evaluation = 9,
             value = "One more comment"
         )
+        WireMock.stubFor(WireMock.post(urlEqualTo("/authorization/token/validate"))
+            .willReturn(aResponse()
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .withBody(mapper.writeValueAsString(Credential(customerId,"user", listOf("Guest")))))
+        )
         comment = mockMvc.perform(put("/comments/${comment.id}")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -274,6 +320,11 @@ class CommentControllerServerSideTests: AbstractTestNGSpringContextTests() {
             evaluation = 6,
             value = "One more comment for a failing request"
         )
+        WireMock.stubFor(WireMock.post(urlEqualTo("/authorization/token/validate"))
+            .willReturn(aResponse()
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .withBody(mapper.writeValueAsString(Credential(customerId,"user", listOf("Guest")))))
+        )
         mockMvc.perform(put("/comments/12345")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -295,6 +346,11 @@ class CommentControllerServerSideTests: AbstractTestNGSpringContextTests() {
             customerId = 300,
             evaluation = 8,
             value = "This is a comment"
+        )
+        WireMock.stubFor(WireMock.post(urlEqualTo("/authorization/token/validate"))
+            .willReturn(aResponse()
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .withBody(mapper.writeValueAsString(Credential(300,"user", listOf("Administrator")))))
         )
         val commentToDelete = mockMvc.perform(post("/comments")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -321,6 +377,11 @@ class CommentControllerServerSideTests: AbstractTestNGSpringContextTests() {
             customerId = 400,
             evaluation = 2,
             value = "This is a comment"
+        )
+        WireMock.stubFor(WireMock.post(urlEqualTo("/authorization/token/validate"))
+            .willReturn(aResponse()
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .withBody(mapper.writeValueAsString(Credential(400,"user", listOf("Guest")))))
         )
         val commentToDelete = mockMvc.perform(post("/comments")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -349,6 +410,11 @@ class CommentControllerServerSideTests: AbstractTestNGSpringContextTests() {
             evaluation = 2,
             value = "This is a comment"
         )
+        WireMock.stubFor(WireMock.post(urlEqualTo("/authorization/token/validate"))
+            .willReturn(aResponse()
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .withBody(mapper.writeValueAsString(Credential(500,"user", listOf("Guest")))))
+        )
         val commentToDelete = mockMvc.perform(post("/comments")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -359,6 +425,11 @@ class CommentControllerServerSideTests: AbstractTestNGSpringContextTests() {
                 mapper.readValue(it.response.contentAsString, CommentResponse::class.java)
             }
 
+        WireMock.stubFor(WireMock.post(urlEqualTo("/authorization/token/validate"))
+            .willReturn(aResponse()
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .withBody(mapper.writeValueAsString(Credential(600,"user", listOf("Guest")))))
+        )
         mockMvc.perform(delete("/comments/${commentToDelete.id}")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -374,6 +445,11 @@ class CommentControllerServerSideTests: AbstractTestNGSpringContextTests() {
             customerId = 700,
             evaluation = 2,
             value = "This is a comment"
+        )
+        WireMock.stubFor(WireMock.post(urlEqualTo("/authorization/token/validate"))
+            .willReturn(aResponse()
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .withBody(mapper.writeValueAsString(Credential(700,"user", listOf("Guest")))))
         )
         val commentToDelete = mockMvc.perform(post("/comments")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -401,6 +477,7 @@ class CommentControllerServerSideTests: AbstractTestNGSpringContextTests() {
             registry.add("spring.datasource.username") { Containers.MYSQL_CONTAINER.username }
             registry.add("spring.datasource.password") { Containers.MYSQL_CONTAINER.password }
             registry.add("spring.elasticsearch.uris") { Containers.ELASTICSEARCH_CONTAINER.httpHostAddress }
+            registry.add("authorization.service.url") { "localhost:\${wiremock.server.port}" }
         }
     }
 }

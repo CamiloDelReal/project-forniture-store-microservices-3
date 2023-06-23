@@ -67,3 +67,7 @@ management:
   zipkin:
     tracing:
       endpoint: http://zipkintracing:9411/api/v2/spans
+
+authorization:
+  service:
+    url: authorizationservice

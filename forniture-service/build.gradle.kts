@@ -53,9 +53,12 @@ dependencies {
 
     implementation("net.logstash.logback:logstash-logback-encoder:6.3")
 
+    implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.apache.httpcomponents.client5:httpclient5:5.2.1")
+    testImplementation("org.springframework.cloud:spring-cloud-contract-wiremock")
     testImplementation("org.testcontainers:testcontainers:1.17.6")
     testImplementation("org.testcontainers:junit-jupiter:1.17.6")
     testImplementation("org.testcontainers:mysql:1.17.6")

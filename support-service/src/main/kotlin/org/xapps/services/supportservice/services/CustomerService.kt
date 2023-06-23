@@ -6,9 +6,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.xapps.services.supportservice.dtos.CustomerResponse
-import org.xapps.services.supportservice.services.exceptions.CustomerNotFound
 import reactor.core.publisher.Mono
-import reactor.kotlin.core.publisher.switchIfEmpty
 import reactor.util.retry.Retry
 import java.time.Duration
 
@@ -32,13 +30,7 @@ class CustomerService @Autowired constructor(
             .header(HttpHeaders.AUTHORIZATION, authzHeader)
             .retrieve()
             .bodyToMono(CustomerResponse::class.java)
-            .switchIfEmpty {
-                Mono.error(CustomerNotFound("Error consuming mock"))
-            }
             .retryWhen(Retry.backoff(retryMaxAttempts, Duration.ofSeconds(retryBackoffPeriod)))
-            .onErrorContinue { t, u ->
-                t.printStackTrace()
-            }
     }
 
 }

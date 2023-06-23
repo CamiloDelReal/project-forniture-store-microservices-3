@@ -9,6 +9,7 @@ import org.springframework.security.authentication.*
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.stereotype.Service
 import org.xapps.services.authorizationservice.dtos.*
+import org.xapps.services.authorizationservice.entities.Credential
 import org.xapps.services.authorizationservice.entities.Token
 import org.xapps.services.authorizationservice.repositories.CredentialRepository
 import org.xapps.services.authorizationservice.repositories.TokenRepository
@@ -16,6 +17,7 @@ import org.xapps.services.authorizationservice.security.SecurityParams
 import org.xapps.services.authorizationservice.services.exceptions.InvalidCredentialException
 import org.xapps.services.authorizationservice.services.exceptions.TokenInvalidException
 import org.xapps.services.authorizationservice.services.exceptions.TokenRevocationException
+import java.lang.Exception
 import java.time.Instant
 import java.util.*
 
@@ -85,9 +87,12 @@ class AuthorizationService @Autowired constructor(
 
     }
 
-    fun isAuthorizationValid(token: String) {
-        getAuthentication(token)
-    }
+    fun isAuthorizationValid(token: String): CredentialResponse =
+        getAuthentication(token)?.let {
+            (it.principal as Credential).toResponse()
+        } ?: run {
+            throw InvalidCredentialException("Authorization token is invalid")
+        }
 
     fun revokeToken(id: String) {
         if (tokenRepository.existsById(id)) {

@@ -1,6 +1,6 @@
 package org.xapps.services.paymentservice.security
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus
@@ -16,13 +16,14 @@ import reactor.core.publisher.Mono
 @Configuration
 @EnableWebFluxSecurity
 @EnableReactiveMethodSecurity
-class SecurityConfiguration {
+class SecurityConfiguration @Autowired constructor(
+    private val securityParams: SecurityParams,
+    private val authorizationRepository: AuthorizationRepository
+){
 
     @Bean
     fun provideSecurityWebFilterChain(
-        http: ServerHttpSecurity,
-        securityParams: SecurityParams,
-        objectMapper: ObjectMapper
+        http: ServerHttpSecurity
     ): SecurityWebFilterChain {
         http.cors().configurationSource {
             val corsConfiguration = CorsConfiguration()
@@ -51,7 +52,7 @@ class SecurityConfiguration {
             .pathMatchers("/actuator/**").permitAll()
             .anyExchange().authenticated()
             .and()
-            .addFilterBefore(provideAuthorizationFilter(objectMapper, securityParams), SecurityWebFiltersOrder.AUTHENTICATION)
+            .addFilterBefore(provideAuthorizationFilter(), SecurityWebFiltersOrder.AUTHENTICATION)
 
         http.headers().frameOptions().disable()
 
@@ -59,6 +60,6 @@ class SecurityConfiguration {
     }
 
     @Bean
-    fun provideAuthorizationFilter(objectMapper: ObjectMapper, securityParams: SecurityParams): AuthorizationFilter =
-        AuthorizationFilter(objectMapper, securityParams)
+    fun provideAuthorizationFilter(): AuthorizationFilter =
+        AuthorizationFilter(securityParams, authorizationRepository)
 }

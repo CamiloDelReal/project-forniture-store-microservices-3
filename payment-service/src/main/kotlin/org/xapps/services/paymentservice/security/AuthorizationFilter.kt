@@ -1,8 +1,5 @@
 package org.xapps.services.paymentservice.security
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import io.jsonwebtoken.Claims
-import io.jsonwebtoken.Jwts
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -18,8 +15,8 @@ import reactor.core.publisher.Mono
 
 @Component
 class AuthorizationFilter @Autowired constructor(
-    private val objectMapper: ObjectMapper,
-    private val securityParams: SecurityParams
+    private val securityParams: SecurityParams,
+    private val authorizationRepository: AuthorizationRepository
 ) : WebFilter {
 
     override fun filter(exchange: ServerWebExchange, chain: WebFilterChain): Mono<Void> {
@@ -45,12 +42,7 @@ class AuthorizationFilter @Autowired constructor(
     private fun getAuthentication(authorizationHeaderValue: String): UsernamePasswordAuthenticationToken? {
         return try {
             val token = authorizationHeaderValue.replace(securityParams.jwtGeneration.type, "")
-            val claims: Claims = Jwts.parser()
-                .setSigningKey(securityParams.jwtGeneration.key)
-                .parseClaimsJws(token)
-                .body
-            val subject: String = claims.subject
-            val credential = objectMapper.readValue(subject, Credential::class.java)
+            val credential = authorizationRepository.validate(TokenValidateRequest(value = token))
             val authorities = credential.roles.map { SimpleGrantedAuthority(it) }
             UsernamePasswordAuthenticationToken(credential, null, authorities)
         } catch (ex: Exception) {
@@ -59,45 +51,3 @@ class AuthorizationFilter @Autowired constructor(
     }
 
 }
-
-//class AuthorizationFilter constructor(
-//    private val objectMapper: ObjectMapper,
-//    private val securityParams: SecurityParams
-//) : OncePerRequestFilter() {
-//
-//    override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
-//        val authzHeaders = request.getHeaders(HttpHeaders.AUTHORIZATION)
-//        var authentication: UsernamePasswordAuthenticationToken? = null
-//
-//        while (authentication == null && authzHeaders.hasMoreElements()) {
-//            try {
-//                authentication = getAuthentication(authzHeaders.nextElement())
-//            } catch (ex: Exception) {
-//                continue
-//            }
-//        }
-//        if (authentication == null) {
-//            response.status = HttpServletResponse.SC_UNAUTHORIZED
-//        } else {
-//            SecurityContextHolder.getContext().authentication = authentication
-//        }
-//        filterChain.doFilter(request, response)
-//    }
-//
-//    private fun getAuthentication(authorizationHeaderValue: String): UsernamePasswordAuthenticationToken? {
-//        return try {
-//            val token = authorizationHeaderValue.replace(securityParams.jwtGeneration.type, "")
-//            val claims: Claims = Jwts.parser()
-//                .setSigningKey(securityParams.jwtGeneration.key)
-//                .parseClaimsJws(token)
-//                .body
-//            val subject: String = claims.subject
-//            val credential = objectMapper.readValue(subject, Credential::class.java)
-//            val authorities = credential.roles.map { SimpleGrantedAuthority(it) }
-//            UsernamePasswordAuthenticationToken(credential, null, authorities)
-//        } catch (ex: Exception) {
-//            null
-//        }
-//    }
-//
-//}

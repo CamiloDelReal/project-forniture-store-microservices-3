@@ -92,4 +92,8 @@ circuitBreaker:
 
 forniture:
   service:
-    url: forniture-service
+    url: fornitureservice
+
+authorization:
+  service:
+    url: authorizationservice

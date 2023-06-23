@@ -10,6 +10,9 @@ spring:
   application:
     name: customerservice
 
+  main:
+    allow-bean-definition-overriding: true
+
   profiles:
     active: dev
 
@@ -40,7 +43,7 @@ spring:
 
 authorization:
   service:
-    url: authorization-service
+    url: authorizationservice
 
 messaging:
   rabbitmq:

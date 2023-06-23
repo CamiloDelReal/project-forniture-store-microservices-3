@@ -72,9 +72,15 @@ management:
 
 customer:
   service:
-    url: http://customer-service
+    url: http://customerservice
     paths:
       currentCustomer: /customers/current
+
+authorization:
+  service:
+    url: http://authorizationservice
+    paths:
+      validate: /authorization/token/validate
 
 circuitBreaker:
   retry:

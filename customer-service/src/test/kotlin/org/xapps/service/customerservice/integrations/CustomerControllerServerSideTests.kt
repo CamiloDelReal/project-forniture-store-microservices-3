@@ -30,6 +30,7 @@ import org.xapps.service.customerservice.dtos.CredentialResponse
 import org.xapps.service.customerservice.dtos.CustomerCreateRequest
 import org.xapps.service.customerservice.dtos.CustomerResponse
 import org.xapps.service.customerservice.dtos.CustomerUpdateRequest
+import org.xapps.service.customerservice.security.Credential
 import org.xapps.service.customerservice.security.SecurityParams
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -46,9 +47,6 @@ class CustomerControllerServerSideTests : AbstractTestNGSpringContextTests() {
     private lateinit var securityParams: SecurityParams
 
     private val mapper = ObjectMapper()
-
-    @Value("\${authorization.service.url}")
-    private lateinit var urlll: String
 
     @Autowired
     private lateinit var env: Environment
@@ -142,10 +140,6 @@ class CustomerControllerServerSideTests : AbstractTestNGSpringContextTests() {
                 .withStatus(HttpStatus.BAD_REQUEST.value()))
         )
 
-        urlll
-        val gg = env.get("authorization.service.url")
-        gg
-
         // Username duplicated
         customerCreateRequest.phone = "341153555231011"
         mockMvc.perform(post("/customers")
@@ -194,6 +188,12 @@ class CustomerControllerServerSideTests : AbstractTestNGSpringContextTests() {
 
         val token = Utils.generateToken(key = securityParams.jwtGeneration.key, customerId = customer.id!!, useAdminRole = false)
         val authz = "${securityParams.jwtGeneration.type} $token"
+
+        WireMock.stubFor(WireMock.post(urlEqualTo("/authorization/token/validate"))
+            .willReturn(aResponse()
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .withBody(mapper.writeValueAsString(Credential(customer.username!!, listOf("Guest"), customer.id!!))))
+        )
 
         mockMvc.perform(get("/customers/current")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -290,6 +290,12 @@ class CustomerControllerServerSideTests : AbstractTestNGSpringContextTests() {
         val token = Utils.generateToken(key = securityParams.jwtGeneration.key, customerId = customer.id!! + 99, useAdminRole = false)
         val authz = "${securityParams.jwtGeneration.type} $token"
 
+        WireMock.stubFor(WireMock.post(urlEqualTo("/authorization/token/validate"))
+            .willReturn(aResponse()
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .withBody(mapper.writeValueAsString(Credential(customer.username!!, listOf("Guest"), customer.id!!+99))))
+        )
+
         mockMvc.perform(get("/customers/current")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -348,6 +354,12 @@ class CustomerControllerServerSideTests : AbstractTestNGSpringContextTests() {
 
         val token = Utils.generateToken(key = securityParams.jwtGeneration.key, customerId = customer.id!!, useAdminRole = false)
         val authz = "${securityParams.jwtGeneration.type} $token"
+
+        WireMock.stubFor(WireMock.post(urlEqualTo("/authorization/token/validate"))
+            .willReturn(aResponse()
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .withBody(mapper.writeValueAsString(Credential(customer.username!!, listOf("Guest"), customer.id!!))))
+        )
 
         mockMvc.perform(put("/customers/{id}", customer.id)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -440,6 +452,12 @@ class CustomerControllerServerSideTests : AbstractTestNGSpringContextTests() {
         val token = Utils.generateToken(key = securityParams.jwtGeneration.key, customerId = customer.id!!, useAdminRole = false)
         val authz = "${securityParams.jwtGeneration.type} $token"
 
+        WireMock.stubFor(WireMock.post(urlEqualTo("/authorization/token/validate"))
+            .willReturn(aResponse()
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .withBody(mapper.writeValueAsString(Credential(customer.username!!, listOf("Guest"), customer.id!!))))
+        )
+
         // Email duplicated
         customerUpdateRequest.email = "user1052@gmail.com"
         customerUpdateRequest.phone = "+34115355523105"
@@ -462,6 +480,12 @@ class CustomerControllerServerSideTests : AbstractTestNGSpringContextTests() {
 
         val tokenWrong = Utils.generateToken(key = securityParams.jwtGeneration.key, customerId = customer.id!! + 99, useAdminRole = false)
         val authzWrong = "${securityParams.jwtGeneration.type} $tokenWrong"
+
+        WireMock.stubFor(WireMock.post(urlEqualTo("/authorization/token/validate"))
+            .willReturn(aResponse()
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .withBody(mapper.writeValueAsString(Credential(customer.username!!, listOf("Guest"), customer.id!!+99))))
+        )
 
         // Wrong credential
         customerUpdateRequest.email = "user1059@gmail.com"
@@ -513,6 +537,12 @@ class CustomerControllerServerSideTests : AbstractTestNGSpringContextTests() {
                 .withStatus(HttpStatus.OK.value()))
         )
 
+        WireMock.stubFor(WireMock.post(urlEqualTo("/authorization/token/validate"))
+            .willReturn(aResponse()
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .withBody(mapper.writeValueAsString(Credential(customer.username!!, listOf("Guest"), customer.id!!))))
+        )
+
         mockMvc.perform(delete("/customers/{id}", customer.id)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -540,6 +570,11 @@ class CustomerControllerServerSideTests : AbstractTestNGSpringContextTests() {
             .willReturn(aResponse()
                 .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .withBody(mapper.writeValueAsString(CredentialResponse(107, 107, customerCreateRequest.username, listOf("Guest"), true, true, true, true))))
+        )
+        WireMock.stubFor(WireMock.post(urlEqualTo("/authorization/token/validate"))
+            .willReturn(aResponse()
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .withBody(mapper.writeValueAsString(Credential(customerCreateRequest.username, listOf("Guest"), 107))))
         )
 
         val customerResponse = mockMvc.perform(post("/customers")
@@ -607,6 +642,12 @@ class CustomerControllerServerSideTests : AbstractTestNGSpringContextTests() {
         val token = Utils.generateToken(key = securityParams.jwtGeneration.key, customerId = customer.id!! + 99, useAdminRole = true)
         val authz = "${securityParams.jwtGeneration.type} $token"
 
+        WireMock.stubFor(WireMock.post(urlEqualTo("/authorization/token/validate"))
+            .willReturn(aResponse()
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .withBody(mapper.writeValueAsString(Credential(customer.username!!, listOf("Administrator"), customer.id!!+99))))
+        )
+
         mockMvc.perform(put("/customers/{id}", customer.id)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -652,6 +693,12 @@ class CustomerControllerServerSideTests : AbstractTestNGSpringContextTests() {
         WireMock.stubFor(WireMock.delete(urlEqualTo("/credentials/customer/${customer.id}"))
             .willReturn(aResponse()
                 .withStatus(HttpStatus.OK.value()))
+        )
+
+        WireMock.stubFor(WireMock.post(urlEqualTo("/authorization/token/validate"))
+            .willReturn(aResponse()
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .withBody(mapper.writeValueAsString(Credential(customer.username!!, listOf("Administrator"), customer.id!!+99))))
         )
 
         mockMvc.perform(delete("/customers/{id}", customer.id)

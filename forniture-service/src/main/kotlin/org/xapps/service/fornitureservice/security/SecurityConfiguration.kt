@@ -1,6 +1,5 @@
 package org.xapps.service.fornitureservice.security
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -18,8 +17,8 @@ import org.springframework.web.cors.CorsConfiguration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 class SecurityConfiguration @Autowired constructor(
-    private val objectMapper: ObjectMapper,
-    private val securityParams: SecurityParams
+    private val securityParams: SecurityParams,
+    private val authorizationRepository: AuthorizationRepository
 ) {
 
     @Bean
@@ -73,5 +72,5 @@ class SecurityConfiguration @Autowired constructor(
 
     @Bean
     fun provideAuthorizationFilter(): AuthorizationFilter =
-        AuthorizationFilter(objectMapper, securityParams)
+        AuthorizationFilter(securityParams, authorizationRepository)
 }

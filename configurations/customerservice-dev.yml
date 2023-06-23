@@ -34,7 +34,7 @@ spring:
 
 authorization:
   service:
-    url: authorization-service
+    url: authorizationservice
 
 messaging:
   rabbitmq:
