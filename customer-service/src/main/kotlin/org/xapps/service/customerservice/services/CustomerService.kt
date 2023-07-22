@@ -2,6 +2,8 @@ package org.xapps.service.customerservice.services
 
 import feign.FeignException
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.cache.annotation.CacheEvict
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.data.repository.findByIdOrNull
@@ -32,6 +34,7 @@ class CustomerService @Autowired constructor(
             )
         ).get().map { it.toResponse() }.toList()
 
+    @Cacheable(value = ["customers"], key = "#id")
     fun read(id: Long, authzHeader: String): CustomerResponse =
         customerRepository.findByIdOrNull(id)?.let { customer ->
             val credentialResponse = credentialService.readByCustomerId(id, authzHeader)
@@ -68,6 +71,7 @@ class CustomerService @Autowired constructor(
             throw EmailNotAvailableException("Email ${request.email} is not available for new accounts")
         }
 
+    @CacheEvict(value = ["customers"], key = "#id")
     fun updateCustomerStatus(id: Long) {
         customerRepository.findByIdOrNull(id)?.let { customer ->
             customer.status = CustomerStatus.CREATED
@@ -77,6 +81,7 @@ class CustomerService @Autowired constructor(
         }
     }
 
+    @CacheEvict(value = ["customers"], key = "#id")
     fun update(id: Long, request: CustomerUpdateRequest): CustomerResponse =
         customerRepository.findByIdOrNull(id)?.let { customer ->
             if(customer.status == CustomerStatus.CREATED) {
@@ -124,6 +129,7 @@ class CustomerService @Autowired constructor(
             throw IdNotFoundException("Customer with Id $id not found")
         }
 
+    @CacheEvict(value = ["customers"], key = "#id")
     fun delete(id: Long, authzHeader: String? = null) =
         if(customerRepository.existsById(id)) {
             try {
@@ -140,6 +146,7 @@ class CustomerService @Autowired constructor(
             throw IdNotFoundException("Customer with Id $id not found")
         }
 
+    @CacheEvict(value = ["customers"], key = "#id")
     fun deleteFromRepository(id: Long) =
         if(customerRepository.existsById(id)) {
             customerRepository.deleteById(id)

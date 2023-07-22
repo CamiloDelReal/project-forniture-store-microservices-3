@@ -96,3 +96,8 @@ circuitBreaker:
   retry:
     maxAttempts: 3
     backOffPeriod: 2000
+
+hazelcast:
+  clusterName: customers-cache
+  members: hazelcastcustomers:5701
+  

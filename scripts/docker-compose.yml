@@ -152,6 +152,35 @@ services:
     networks:
       - microservices3
 
+# Caching -----------------------------------------------------------------------------------------
+
+  hazelcastcustomers:
+    image: hazelcast/hazelcast:5.1.2
+    mem_limit: 600m
+    hostname: hazelcastcustomers
+    container_name: hazelcastcustomers
+    ports:
+      - 5701:5701
+    environment:
+      HZ_NETWORK_PUBLICADDRESS: hazelcastcustomers:5701
+      HZ_CLUSTERNAME: customers-cache
+    networks:
+      - microservices3
+  
+  hazelcastcustomersmanagementcenter:
+    image: hazelcast/management-center:5.1.3
+    hostname: hazelcastcustomersmanagementcenter
+    container_name: hazelcastcustomersmanagementcenter
+    ports:
+      - 8080:8080
+    environment:
+      MC_ADMIN_USER: root
+      MC_ADMIN_PASSWORD: qwerty13579
+      MC_DEFAULT_CLUSTER: customers-cache
+      MC_DEFAULT_CLUSTER_MEMBERS: hazelcastcustomers:5701
+    networks:
+      - microservices3
+
 # Monitoring --------------------------------------------------------------------------------------
 
   zipkintracing:

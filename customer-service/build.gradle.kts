@@ -55,6 +55,9 @@ dependencies {
 
     runtimeOnly("io.micrometer:micrometer-registry-prometheus")
 
+    implementation("com.hazelcast:hazelcast:5.2.1")
+    implementation("com.hazelcast:hazelcast-spring:5.2.1")
+
     implementation("net.logstash.logback:logstash-logback-encoder:6.3")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
